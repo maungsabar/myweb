@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(255)
+  description String   @db.Text
+  imageUrl    String   @db.VarChar(500)
+  techStack   String   @db.VarChar(500)
+  projectUrl  String?  @db.VarChar(500)
+  createdAt   DateTime @default(now())
+
+  @@map("projects")
+}
+
+model Admin {
+  id       Int    @id @default(autoincrement())
+  username String @unique @db.VarChar(100)
+  password String @db.VarChar(255)
+
+  @@map("admins")
+}
+
+model WebsiteSetting {
+  id           Int     @id @default(autoincrement())
+  siteName     String  @default("DevPortfolio") @db.VarChar(100)
+  ownerName    String  @default("John Doe") @db.VarChar(100)
+  roleTitle    String  @default("Full Stack Developer") @db.VarChar(150)
+  heroTitle    String  @default("Building digital experiences that matter.") @db.VarChar(255)
+  heroSubtitle String  @default("A passionate developer crafting modern, scalable web applications with cutting-edge technology.") @db.VarChar(1000)
+  contactEmail String  @default("hello@example.com") @db.VarChar(150)
+  githubUrl    String  @default("https://github.com") @db.VarChar(300)
+  discordUrl   String  @default("https://discord.com") @db.VarChar(300)
+  whatsappUrl  String  @default("https://wa.me/") @db.VarChar(300)
+  logoUrl      String? @db.VarChar(1000)
+  resumePdfUrl String? @db.VarChar(1000)
+  aboutMe      String? @db.Text
+  isCvActive   Boolean @default(true)
+
+  @@map("website_settings")
+}
+
+model Experience {
+  id          Int      @id @default(autoincrement())
+  company     String   @db.VarChar(255)
+  position    String   @db.VarChar(255)
+  period      String   @db.VarChar(100)
+  location    String?  @db.VarChar(150)
+  description String   @db.Text
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  @@map("experiences")
+}
+
+model Education {
+  id          Int      @id @default(autoincrement())
+  institution String   @db.VarChar(255)
+  degree      String   @db.VarChar(255)
+  period      String   @db.VarChar(100)
+  description String?  @db.Text
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  @@map("educations")
+}
+
+model Skill {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(100)
+  category  String   @default("Programming") @db.VarChar(100)
+  iconName  String?  @db.VarChar(100)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@map("skills")
+}
+
+model SkillCategory {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique @db.VarChar(100)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@map("skill_categories")
+}
+
+model VisitorLog {
+  id        Int      @id @default(autoincrement())
+  ip        String?  @db.VarChar(100)
+  country   String   @default("Indonesia") @db.VarChar(100)
+  city      String   @default("Jakarta") @db.VarChar(100)
+  device    String   @default("Desktop") @db.VarChar(50)
+  path      String   @default("/") @db.VarChar(255)
+  createdAt DateTime @default(now())
+
+  @@map("visitor_logs")
+}
