@@ -111,11 +111,18 @@ export default function AdminCvPage() {
     setIsTogglingStatus(true);
     try {
       const res = await fetch("/api/settings", {
-        method: "PUT",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isCvActive: newStatus }),
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data: any = {};
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { success: false, message: `Server Error (${res.status}): Respon server tidak valid.` };
+      }
+
       if (res.ok && data.success) {
         setIsCvActive(newStatus);
         setToast({
@@ -129,7 +136,7 @@ export default function AdminCvPage() {
         setToast({
           type: "error",
           title: "Gagal Mengubah Status",
-          message: data.message || "Gagal memperbarui status CV.",
+          message: data.message || `Gagal memperbarui status CV (HTTP ${res.status}).`,
         });
       }
     } catch {
@@ -149,11 +156,18 @@ export default function AdminCvPage() {
     setIsSavingSettings(true);
     try {
       const res = await fetch("/api/settings", {
-        method: "PUT",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ aboutMe, resumePdfUrl }),
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data: any = {};
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { success: false, message: `Server Error (${res.status})` };
+      }
+
       if (res.ok && data.success) {
         setToast({
           type: "success",
@@ -207,7 +221,7 @@ export default function AdminCvPage() {
         setResumePdfUrl(data.data.url);
         // Automatically update settings
         await fetch("/api/settings", {
-          method: "PUT",
+          method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ resumePdfUrl: data.data.url }),
         });

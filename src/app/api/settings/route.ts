@@ -20,8 +20,8 @@ export async function GET() {
   }
 }
 
-// PUT /api/settings - Update website settings
-export async function PUT(request: NextRequest) {
+// Shared handler for updating website settings (supports both POST & PUT for Nginx/Proxy compatibility)
+async function handleUpdateSettings(request: NextRequest) {
   try {
     const body = await request.json();
     const {
@@ -73,10 +73,20 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({ success: true, data: updated });
   } catch (error) {
-    console.error("[PUT /api/settings] Error:", error);
+    console.error("[UPDATE /api/settings] Error:", error);
     return NextResponse.json(
       { success: false, message: "Gagal menyimpan pengaturan." },
       { status: 500 }
     );
   }
+}
+
+// POST /api/settings - Update website settings (compatible with LXC/Nginx strict proxies)
+export async function POST(request: NextRequest) {
+  return handleUpdateSettings(request);
+}
+
+// PUT /api/settings - Update website settings
+export async function PUT(request: NextRequest) {
+  return handleUpdateSettings(request);
 }

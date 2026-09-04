@@ -242,12 +242,18 @@ export default function SettingsPage() {
     setIsSubmitting(true);
     try {
       const res = await fetch("/api/settings", {
-        method: "PUT",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(settings),
       });
 
-      const data = await res.json();
+      const text = await res.text();
+      let data: any = {};
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { success: false, message: `Server Error (${res.status}): Respon server tidak valid.` };
+      }
 
       if (res.ok && data.success) {
         setToast({
@@ -259,7 +265,7 @@ export default function SettingsPage() {
         setToast({
           type: "error",
           title: "Gagal Menyimpan",
-          message: data.message || "Gagal menyimpan pengaturan."
+          message: data.message || `Gagal menyimpan pengaturan (HTTP ${res.status}).`
         });
       }
     } catch {
