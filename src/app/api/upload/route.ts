@@ -6,7 +6,9 @@ import path from "path";
 // Max file size: 4MB (matching frontend validation)
 const MAX_SIZE = 4 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/svg+xml", "image/gif"];
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
+
+// 💡 PERUBAHAN DI SINI: Langsung arahkan ke folder absolut server LXC
+const UPLOAD_DIR = "/var/www/myweb-storage/uploads";
 
 // POST /api/upload - Upload an image file (Logo or Project)
 export async function POST(request: NextRequest) {
@@ -71,6 +73,7 @@ export async function POST(request: NextRequest) {
     await writeFile(filepath, buffer);
 
     // Return the public URL path
+    // Nginx akan otomatis memetakan '/uploads/' ke folder eksternal tersebut
     const publicUrl = `/uploads/${filename}`;
 
     return NextResponse.json({
@@ -116,4 +119,3 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
-
