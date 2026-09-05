@@ -17,6 +17,7 @@ import { ScrollReveal } from "@/components/ScrollReveal";
 import { prisma } from "@/lib/prisma";
 
 export const revalidate = 0; // Ensure fresh data on every request
+export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   // Fetch data directly from MySQL database at server-side render time
