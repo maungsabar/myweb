@@ -48,7 +48,12 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-50 flex flex-col justify-between">
-      <Navbar siteName={settings?.siteName} roleTitle={settings?.roleTitle} />
+      <Navbar
+        siteName={settings?.siteName}
+        roleTitle={settings?.roleTitle}
+        logoUrl={settings?.logoUrl}
+        isCvActive={settings?.isCvActive}
+      />
 
       <main className="flex-1 py-12">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 space-y-8">

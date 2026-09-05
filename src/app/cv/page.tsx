@@ -96,7 +96,7 @@ export default async function CvPublicPage() {
         </main>
 
         <footer className="border-t border-zinc-800/80 bg-zinc-950 py-8 text-xs text-zinc-400 text-center">
-          <p>© 2026 {siteName}. Hak Cipta Dilindungi Undang-Undang.</p>
+          <p>© 2026 {siteName}. Curriculum Vitae — {ownerName}</p>
         </footer>
       </div>
     );
