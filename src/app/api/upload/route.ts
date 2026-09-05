@@ -1,18 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, unlink } from "fs/promises";
+import { writeFile, unlink, mkdir } from "fs/promises";
 import { existsSync } from "fs";
 import path from "path";
 
-// Max file size: 2MB
-const MAX_SIZE = 2 * 1024 * 1024;
+// Max file size: 4MB (matching frontend validation)
+const MAX_SIZE = 4 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/svg+xml", "image/gif"];
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 
-// POST /api/upload - Upload a logo image file
+// POST /api/upload - Upload an image file (Logo or Project)
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
+    const type = (formData.get("type") as string) || "project"; // 'logo' or 'project'
 
     if (!file) {
       return NextResponse.json(
@@ -29,33 +30,39 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate file size
+    // Validate file size (4MB limit)
     if (file.size > MAX_SIZE) {
       return NextResponse.json(
-        { success: false, message: "Ukuran file terlalu besar. Maksimal 2MB." },
+        { success: false, message: "Ukuran file terlalu besar. Maksimal 4MB." },
         { status: 400 }
       );
     }
 
+    // Ensure uploads directory exists
+    await mkdir(UPLOAD_DIR, { recursive: true });
+
     // Generate unique filename using timestamp + original extension
     const ext = file.name.split(".").pop()?.toLowerCase() || "png";
-    const filename = `logo-${Date.now()}.${ext}`;
+    const prefix = type === "logo" ? "logo" : "project";
+    const filename = `${prefix}-${Date.now()}.${ext}`;
     const filepath = path.join(UPLOAD_DIR, filename);
 
-    // Delete old logo files to keep uploads folder clean
-    try {
-      const { readdir } = await import("fs/promises");
-      const existing = await readdir(UPLOAD_DIR);
-      for (const f of existing) {
-        if (f.startsWith("logo-") && f !== filename) {
-          const oldPath = path.join(UPLOAD_DIR, f);
-          if (existsSync(oldPath)) {
-            await unlink(oldPath);
+    // If uploading logo, clean up old logo files only
+    if (type === "logo") {
+      try {
+        const { readdir } = await import("fs/promises");
+        const existing = await readdir(UPLOAD_DIR);
+        for (const f of existing) {
+          if (f.startsWith("logo-") && f !== filename) {
+            const oldPath = path.join(UPLOAD_DIR, f);
+            if (existsSync(oldPath)) {
+              await unlink(oldPath);
+            }
           }
         }
+      } catch {
+        // Non-fatal: if cleanup fails, continue
       }
-    } catch {
-      // Non-fatal: if cleanup fails, continue
     }
 
     // Write file to disk
@@ -68,7 +75,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Logo berhasil diupload.",
+      message: "File gambar berhasil diupload.",
       data: { url: publicUrl },
     });
   } catch (error) {
@@ -80,7 +87,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// DELETE /api/upload - Remove the current logo file
+// DELETE /api/upload - Remove an uploaded file
 export async function DELETE(request: NextRequest) {
   try {
     const { filename } = await request.json();
@@ -109,3 +116,4 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+

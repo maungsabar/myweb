@@ -87,6 +87,7 @@ export default function AdminDashboardPage() {
     imageUrl: "",
     techStack: "",
     projectUrl: "",
+    features: "",
   });
 
   const [uploadMode, setUploadMode] = useState<"file" | "url">("file");
@@ -164,6 +165,7 @@ export default function AdminDashboardPage() {
       imageUrl: "",
       techStack: "",
       projectUrl: "",
+      features: "",
     });
     setUploadMode("file");
     setIsProjectModalOpen(true);
@@ -172,14 +174,19 @@ export default function AdminDashboardPage() {
   // Open Modal for Editing Existing Project
   const openEditModal = (project: Project) => {
     setEditingProjectId(project.id);
+    if (project.imageUrl && (project.imageUrl.startsWith("http://") || project.imageUrl.startsWith("https://"))) {
+      setUploadMode("url");
+    } else {
+      setUploadMode("file");
+    }
     setProjectForm({
       title: project.title,
       description: project.description,
       imageUrl: project.imageUrl,
       techStack: project.techStack,
       projectUrl: project.projectUrl || "",
+      features: project.features || "",
     });
-    setUploadMode("file");
     setIsProjectModalOpen(true);
   };
 
@@ -208,6 +215,7 @@ export default function AdminDashboardPage() {
     try {
       const form = new FormData();
       form.append("file", file);
+      form.append("type", "project");
 
       const res = await fetch("/api/upload", {
         method: "POST",
@@ -283,9 +291,10 @@ export default function AdminDashboardPage() {
         body: JSON.stringify({
           title: projectForm.title.trim(),
           description: projectForm.description.trim(),
-          imageUrl: projectForm.imageUrl.trim() || "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop",
+          imageUrl: projectForm.imageUrl.trim(),
           techStack: projectForm.techStack.trim(),
           projectUrl: projectForm.projectUrl.trim() || null,
+          features: projectForm.features.trim() || null,
         }),
       });
 
@@ -809,6 +818,21 @@ export default function AdminDashboardPage() {
                   onChange={(e) => setProjectForm({ ...projectForm, techStack: e.target.value })}
                   placeholder="Pisahkan dengan koma, contoh: Next.js, React, Tailwind CSS, TypeScript"
                   className="w-full rounded-lg bg-zinc-950 border border-zinc-800 px-3.5 py-2.5 text-xs text-zinc-100 placeholder-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all"
+                />
+              </div>
+
+              {/* Field 3.5: Kelebihan & Keunggulan */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-zinc-200 flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-blue-500" />
+                  Kelebihan &amp; Keunggulan (Pisahkan tiap poin dengan baris baru / Enter)
+                </label>
+                <textarea
+                  rows={4}
+                  value={projectForm.features}
+                  onChange={(e) => setProjectForm({ ...projectForm, features: e.target.value })}
+                  placeholder={"Arsitektur kode modular dan mudah dikembangkan\nAntarmuka responsif untuk semua ukuran layar\nPerforma tinggi dengan optimasi rendering terbaik\nClean code dengan standar TypeScript strict mode"}
+                  className="w-full rounded-lg bg-zinc-950 border border-zinc-800 px-3.5 py-2.5 text-xs text-zinc-100 placeholder-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all font-sans"
                 />
               </div>
 

@@ -134,19 +134,22 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
                 </p>
               </div>
 
-              {/* Tech badges detail */}
+              {/* Features detail */}
               <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-4">
                 <h3 className="text-base font-bold text-zinc-100 flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-blue-500" />
                   Kelebihan &amp; Keunggulan
                 </h3>
                 <ul className="space-y-2.5">
-                  {[
-                    "Arsitektur kode modular dan mudah dikembangkan",
-                    "Antarmuka responsif untuk semua ukuran layar",
-                    "Performa tinggi dengan optimasi rendering terbaik",
-                    "Clean code dengan standar TypeScript strict mode",
-                  ].map((feat, idx) => (
+                  {(project.features && project.features.trim()
+                    ? project.features.split("\n").map((f) => f.trim()).filter(Boolean)
+                    : [
+                        "Arsitektur kode modular dan mudah dikembangkan",
+                        "Antarmuka responsif untuk semua ukuran layar",
+                        "Performa tinggi dengan optimasi rendering terbaik",
+                        "Clean code dengan standar TypeScript strict mode",
+                      ]
+                  ).map((feat, idx) => (
                     <li key={idx} className="flex items-start gap-3 text-xs text-zinc-300">
                       <CheckCircle2 className="h-4 w-4 text-blue-500 flex-shrink-0 mt-0.5" />
                       <span>{feat}</span>

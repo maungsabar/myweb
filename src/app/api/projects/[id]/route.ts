@@ -37,23 +37,27 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
   try {
     const body = await request.json();
-    const { title, description, imageUrl, techStack, projectUrl } = body;
+    const { title, description, imageUrl, techStack, projectUrl, features } = body;
 
-    if (!title || !description || !imageUrl || !techStack) {
+    if (!title || !description || !techStack) {
       return NextResponse.json(
-        { success: false, message: "Field title, description, imageUrl, dan techStack wajib diisi." },
+        { success: false, message: "Field title, description, dan techStack wajib diisi." },
         { status: 400 }
       );
     }
+
+    const defaultImage = "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=800&auto=format&fit=crop";
+    const finalImageUrl = imageUrl && String(imageUrl).trim() ? String(imageUrl).trim() : defaultImage;
 
     const updated = await prisma.project.update({
       where: { id: projectId },
       data: {
         title: String(title).trim(),
         description: String(description).trim(),
-        imageUrl: String(imageUrl).trim(),
+        imageUrl: finalImageUrl,
         techStack: String(techStack).trim(),
         projectUrl: projectUrl ? String(projectUrl).trim() : null,
+        features: features !== undefined ? (features ? String(features).trim() : null) : undefined,
       },
     });
 

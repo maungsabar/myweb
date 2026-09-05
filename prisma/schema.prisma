@@ -17,6 +17,7 @@ model Project {
   imageUrl    String   @db.VarChar(500)
   techStack   String   @db.VarChar(500)
   projectUrl  String?  @db.VarChar(500)
+  features    String?  @db.Text
   createdAt   DateTime @default(now())
 
   @@map("projects")

@@ -7,6 +7,7 @@ export interface Project {
   imageUrl: string;
   techStack: string; // Comma-separated list of technologies
   projectUrl?: string | null;
+  features?: string | null; // Kelebihan & Keunggulan (bullet points / newline separated)
   createdAt: string; // ISO string from API
 }
 
