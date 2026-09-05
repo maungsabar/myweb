@@ -3,6 +3,7 @@ import { Montserrat } from "next/font/google";
 import { VisitorTracker } from "@/components/VisitorTracker";
 import { prisma } from "@/lib/prisma";
 import "./globals.css";
+export const dynamic = "force-dynamic";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -12,13 +13,13 @@ const montserrat = Montserrat({
 export async function generateMetadata(): Promise<Metadata> {
   try {
     const settings = await prisma.websiteSetting.findFirst();
-    const siteName = settings?.siteName || "DevPortfolio";
+    const siteName = settings?.siteName || "DepersaDev";
     const roleTitle = settings?.roleTitle || "Website Portofolio & Dashboard Admin";
     const logoUrl = settings?.logoUrl;
 
     return {
       title: `${siteName} | ${roleTitle}`,
-      description: settings?.heroSubtitle || "Website Portofolio profesional modern dark mode dengan dashboard admin manajemen proyek.",
+      description: settings?.heroSubtitle || "Website Portofolio profesional modern",
       icons: logoUrl
         ? {
             icon: logoUrl,
@@ -29,8 +30,8 @@ export async function generateMetadata(): Promise<Metadata> {
     };
   } catch {
     return {
-      title: "DevPortfolio | Website Portofolio & Dashboard Admin Minimalis",
-      description: "Website Portofolio profesional modern dark mode dengan dashboard admin manajemen proyek.",
+      title: "DepersaDev | Website Portofolio & Dashboard Admin Minimalis",
+      description: "Website Portofolio profesional modern",
     };
   }
 }
