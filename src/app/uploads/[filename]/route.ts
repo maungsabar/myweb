@@ -3,7 +3,8 @@ import { readFile } from "fs/promises";
 import { existsSync } from "fs";
 import path from "path";
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
+//const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
+const UPLOAD_DIR = "/var/www/myweb-storage/uploads";
 
 // Helper to determine Content-Type header from file extension
 function getContentType(filename: string): string {
