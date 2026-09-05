@@ -149,6 +149,7 @@ export default function SettingsPage() {
     try {
       const form = new FormData();
       form.append("file", file);
+      form.append("type", "logo");
 
       const res = await fetch("/api/upload", {
         method: "POST",
